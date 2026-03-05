@@ -1,0 +1,1 @@
+I want to set up a pipeline using the qwen2.5 model so that when I input Korean text, it gets translated into English in other AI tools. How can I do this?

@@ -1,0 +1,34 @@
+## ⚡ Ollama 빠른 시작 (5분 안에 번역 시작하기)
+
+### 1) Ollama 서버 실행
+```bash
+ollama serve &
+```
+
+### 2) 한 줄로 번역하기
+```bash
+ollama run qwen2.5:7b "안녕하세요를 영어로 번역해주세요"
+```
+
+### 3) 파일 번역하기 (생성됨)
+```bash
+python3 translate.py input_kr.txt output_en.txt
+```
+
+### 4) Python에서 직접 사용
+```python
+import ollama
+
+result = ollama.chat(
+    model='qwen2.5:7b',
+    messages=[{'role': 'user', 'content': '한글 텍스트를 영어로 번역해줘'}]
+)
+print(result['message']['content'])
+```
+
+### 5) 서버 중지 (필요할 때)
+```bash
+pkill -f ollama
+```
+
+---
