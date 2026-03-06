@@ -1,6 +1,6 @@
 # language_ai
 
-이 디렉터리는 Ollama와 Qwen 2.5 모델을 이용해 한국어→영어 번역 환경을 구성하는 예제를 담고 있습니다.
+이 디렉터리는 Ollama와 Qwen 2.5 모델을 이용해 **한영/영한 양방향 자동 번역 환경**을 구성하는 CLI 도구(`translate`) 예제를 담고 있습니다.
 
 ### 설치 스크립트
 - `setup_qwen.sh`: Ollama 설치, 서버 실행, Qwen 2.5 모델 다운로드 및 Python 패키지/예제 스크립트 생성
@@ -19,10 +19,15 @@ bash setup_translate.sh
 source ~/.zshrc
 ```
 
-#### 번역 CLI 기본 사용법
+#### 번역 CLI 기본 사용법 (양방향 자동 인식)
 ```bash
+# 한국어 -> 영어 번역
 translate 안녕하세요, 오늘 날씨가 참 좋습니다.
+
+# 영어 -> 한국어 번역 및 특수문자 완벽 지원
+translate Is there anything else to consider?
 ```
+> 문장 끝에 물음표(`?`)나 별표(`*`) 같은 특수 기호가 들어가도 ZSH 글로브(glob) 오류 없이 잘 인지하도록 `noglob` 형태로 래핑되어 있습니다. 따옴표 없이 편하게 질문해보세요!
 
 #### 클립보드 복사 모드 (`-c` 또는 `--clipboard`)
 명령어 뒤에 붙이면 터미널에 결과가 출력되지 않고, 번역된 텍스트가 즉시 클립보드에 복사(Mac `pbcopy` / 리눅스 `xclip` 자동 대응)됩니다.
