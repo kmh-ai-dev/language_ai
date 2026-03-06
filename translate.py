@@ -52,7 +52,8 @@ def build_messages(text: str, system_prompt: Optional[str] = None) -> list:
         else (
             "You are a professional translator. If the input text is primarily in Korean, translate it to English. "
             "If the input text is primarily in English, translate it to Korean. "
-            "Translate accurately, preserving meaning, intent, technical terms, and code snippets."
+            "Translate accurately, preserving meaning, intent, technical terms, and code snippets. "
+            "Crucially, you must ONLY output the translated text itself. Do NOT add any conversational text, explanations, or notes."
         )
     )
     return [
