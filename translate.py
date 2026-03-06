@@ -45,18 +45,19 @@ def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
 
 
-def build_messages(korean_text: str, system_prompt: Optional[str] = None) -> list:
+def build_messages(text: str, system_prompt: Optional[str] = None) -> list:
     sys_prompt = (
         system_prompt
         if system_prompt
         else (
-            "You are a professional translator. Translate Korean to English accurately, "
-            "preserving meaning and intent. Keep technical terms and code snippets intact."
+            "You are a professional translator. If the input text is primarily in Korean, translate it to English. "
+            "If the input text is primarily in English, translate it to Korean. "
+            "Translate accurately, preserving meaning, intent, technical terms, and code snippets."
         )
     )
     return [
         {"role": "system", "content": sys_prompt},
-        {"role": "user", "content": f"Translate the following Korean text to English:\n\n{korean_text}"},
+        {"role": "user", "content": f"Please translate the following text:\n\n{text}"},
     ]
 
 
@@ -80,7 +81,7 @@ def translate_text_with_ollama(text: str, model: str, system_prompt: Optional[st
 
 
 def translate_text(text: str, model: str = "qwen2.5:7b", system_prompt: Optional[str] = None) -> str:
-    """Translate Korean text to English using Ollama."""
+    """Translate text bidirectionally (Korean <-> English) using Ollama."""
     return translate_text_with_ollama(text, model, system_prompt)
 
 
@@ -88,12 +89,12 @@ def translate_file(input_path: str, output_path: str, model: str, system_prompt:
     if not os.path.isfile(input_path):
         raise FileNotFoundError(input_path)
     with open(input_path, "r", encoding="utf-8") as f:
-        korean_text = f.read().strip()
-    if not korean_text:
+        text = f.read().strip()
+    if not text:
         eprint(f"Warning: input file is empty: {input_path}")
         translated = ""
     else:
-        translated = translate_text(korean_text, model, system_prompt)
+        translated = translate_text(text, model, system_prompt)
     os.makedirs(os.path.dirname(output_path) or ".", exist_ok=True)
     with open(output_path, "w", encoding="utf-8") as f:
         f.write(translated)
@@ -101,7 +102,7 @@ def translate_file(input_path: str, output_path: str, model: str, system_prompt:
 
 
 def main(argv: Optional[list] = None):
-    p = argparse.ArgumentParser(description="Translate Korean text files to English using Ollama.")
+    p = argparse.ArgumentParser(description="Translate text files bidirectionally (Korean <-> English) using Ollama.")
     p.add_argument("input", nargs="?", help="input file (or omit when using --dir or stdin)")
     p.add_argument("output", nargs="?", help="output file (or omit when using --dir or stdout)")
     p.add_argument("--model", default="qwen2.5:7b", help="model to use (default: qwen2.5:7b)")
@@ -117,11 +118,11 @@ def main(argv: Optional[list] = None):
             if pyperclip is None:
                 eprint("pyperclip is required for clipboard mode. Install with: pip install pyperclip")
                 return 1
-            korean_text = pyperclip.paste().strip()
-            if not korean_text:
+            text = pyperclip.paste().strip()
+            if not text:
                 eprint("Warning: clipboard is empty")
                 return 0
-            translated = translate_text(korean_text, args.model, args.system_prompt)
+            translated = translate_text(text, args.model, args.system_prompt)
             pyperclip.copy(translated)
             print(f"Translated and copied to clipboard: {translated[:50]}...")
             return 0
@@ -145,11 +146,11 @@ def main(argv: Optional[list] = None):
             return 0
         # stdin/stdout mode
         if not args.input and not args.output:
-            korean_text = sys.stdin.read().strip()
-            if not korean_text:
+            text = sys.stdin.read().strip()
+            if not text:
                 eprint("Warning: no input text")
                 return 0
-            translated = translate_text(korean_text, args.model, args.system_prompt)
+            translated = translate_text(text, args.model, args.system_prompt)
             print(translated)
             return 0
         p.print_help()
